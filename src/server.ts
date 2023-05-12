@@ -1,6 +1,7 @@
 import fastify from 'fastify'
 import { knex } from './database'
 import crypto from 'node:crypto'
+import { env } from './env'
 
 const app = fastify() // for create the base of application - the methods http will be availability in instance 'app'
 
@@ -26,7 +27,7 @@ app.get('/fetch', async () => {
 
 app
   .listen({
-    port: 3333,
+    port: env.PORT,
   })
   .then(() => {
     // we let's execute a console.log when the promise finished your execution
