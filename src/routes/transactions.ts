@@ -5,6 +5,27 @@ import crypto from 'node:crypto'
 
 export async function transactionsRoutes(app: FastifyInstance) {
   // in 'fastify' all plugin need to be async
+  app.get('/', async () => {
+    const transactions = await knex('transactions').select() // return all fields
+
+    return {
+      // we let's return how object because we can put more information
+      transactions,
+    }
+  })
+
+  app.get('/:id', async (request) => {
+    const getTransactionParamsSchema = z.object({
+      id: z.string().uuid(), // have we can create validation with data on format 'uuid'
+    })
+
+    const { id } = getTransactionParamsSchema.parse(request.params) // 'params' are the named params that come in url
+
+    const transaction = await knex('transactions').where('id', id).first() // method 'first' catch just first find item, not come a array of data
+
+    return { transaction }
+  })
+
   app.post('/', async (request, reply) => {
     const createTransactionBodySchema = z.object({
       title: z.string(),
