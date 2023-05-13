@@ -4,7 +4,9 @@ import { transactionsRoutes } from './routes/transactions'
 
 const app = fastify() // for create the base of application - the methods http will be availability in instance 'app'
 
-app.register(transactionsRoutes) // we let's register our plugin
+app.register(transactionsRoutes, {
+  prefix: 'transactions', // 'url' prefix for this plugin to be active - inside this plugin we don't need use the name 'transactions' in routes
+}) // we let's register our plugin
 
 app
   .listen({
