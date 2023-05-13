@@ -2,39 +2,73 @@ import { FastifyInstance } from 'fastify'
 import { knex } from '../database'
 import { z } from 'zod'
 import crypto from 'node:crypto'
+import { checkSessionIdExists } from '../middlewares/check-session-id-exists'
 
 export async function transactionsRoutes(app: FastifyInstance) {
   // in 'fastify' all plugin need to be async
-  app.get('/', async () => {
-    const transactions = await knex('transactions').select() // return all fields
+  app.get(
+    '/',
+    {
+      preHandler: [checkSessionIdExists], // middleware...
+    },
+    async (request, reply) => {
+      // this function is called handler
+      const { sessionId } = request.cookies
 
-    return {
-      // we let's return how object because we can put more information
-      transactions,
-    }
-  })
+      const transactions = await knex('transactions')
+        .where('session_id', sessionId) // we let's find just the transactions of user
+        .select() // return all fields
 
-  app.get('/:id', async (request) => {
-    const getTransactionParamsSchema = z.object({
-      id: z.string().uuid(), // have we can create validation with data on format 'uuid'
-    })
+      return {
+        // we let's return how object because we can put more information
+        transactions,
+      }
+    },
+  )
 
-    const { id } = getTransactionParamsSchema.parse(request.params) // 'params' are the named params that come in url
+  app.get(
+    '/:id',
+    {
+      preHandler: [checkSessionIdExists], // middleware...
+    },
+    async (request) => {
+      const getTransactionParamsSchema = z.object({
+        id: z.string().uuid(), // have we can create validation with data on format 'uuid'
+      })
 
-    const transaction = await knex('transactions').where('id', id).first() // method 'first' catch just first find item, not come a array of data
+      const { id } = getTransactionParamsSchema.parse(request.params) // 'params' are the named params that come in url
 
-    return { transaction }
-  })
+      const { sessionId } = request.cookies
 
-  app.get('/summary', async () => {
-    const summary = await knex('transactions')
-      .sum('amount', { as: 'amount' })
-      .first() // method 'sum' can are used in any sql database, is a method of aggregation, sum all fields of a column specific
+      const transaction = await knex('transactions')
+        .where({
+          session_id: sessionId,
+          id,
+        })
+        .first() // method 'first' catch just first find item, not come a array of data
 
-    return {
-      summary,
-    }
-  })
+      return { transaction }
+    },
+  )
+
+  app.get(
+    '/summary',
+    {
+      preHandler: [checkSessionIdExists], // middleware...
+    },
+    async (request) => {
+      const { sessionId } = request.cookies
+
+      const summary = await knex('transactions')
+        .where('session_id', sessionId)
+        .sum('amount', { as: 'amount' })
+        .first() // method 'sum' can are used in any sql database, is a method of aggregation, sum all fields of a column specific
+
+      return {
+        summary,
+      }
+    },
+  )
 
   app.post('/', async (request, reply) => {
     const createTransactionBodySchema = z.object({
@@ -52,7 +86,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
     if (!sessionId) {
       sessionId = crypto.randomUUID()
 
-      reply.cookie('sessionID', sessionId, {
+      reply.cookie('sessionId', sessionId, {
         // put configs - save sessionId in cookies
         path: '/', // all routes of backend can access this cookie
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
