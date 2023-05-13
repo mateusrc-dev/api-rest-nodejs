@@ -47,10 +47,23 @@ export async function transactionsRoutes(app: FastifyInstance) {
       request.body,
     ) // let's doing the validation of the request body with the zod schema - with it the body is now typed - in the body of the request comes the information to create resources
 
+    let sessionId = request.cookies.sessionId // find inside cookies if exist a sessionId
+
+    if (!sessionId) {
+      sessionId = crypto.randomUUID()
+
+      reply.cookie('sessionID', sessionId, {
+        // put configs - save sessionId in cookies
+        path: '/', // all routes of backend can access this cookie
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      })
+    }
+
     await knex('transactions').insert({
       id: crypto.randomUUID(),
       title,
       amount: type === 'credit' ? amount : amount * -1,
+      session_id: sessionId,
     })
 
     return reply.status(201).send()
