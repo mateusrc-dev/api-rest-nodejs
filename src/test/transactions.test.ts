@@ -1,4 +1,4 @@
-import { test, beforeAll, afterAll, describe } from 'vitest'
+import { test, beforeAll, afterAll, describe, expect } from 'vitest'
 import { app } from '../app' // we let's have access the application without having to climb it
 import request from 'supertest'
 
@@ -23,5 +23,29 @@ describe('Transactions routes', () => {
         type: 'credit',
       })
       .expect(201)
+  })
+
+  test('the user can list all transactions', async () => {
+    const createTransactionResponse = await request(app.server) // we let's access 'Node' server http that are inside in framework
+      .post('/transactions')
+      .send({
+        title: 'New transaction',
+        amount: 5000,
+        type: 'credit',
+      })
+    const cookies = createTransactionResponse.get('Set-Cookie') // cannot send this cookie to another test, each test is isolated from the other - a test not can dependence of other - for create a test we need consider that other tests not exist
+
+    const listTransactionsResponse = await request(app.server)
+      .get('/transactions')
+      .set('Cookie', cookies) // set is for send a information in headers of request (view more in documentation)
+      .expect(200) // 200 = success
+
+    expect(listTransactionsResponse.body.transactions).toEqual([
+      expect.objectContaining({
+        // id: expect.any(String), // hope my id is any string
+        title: 'New transaction',
+        amount: 5000,
+      }),
+    ]) // here will return the transaction created above - we can test if the data is how expect
   })
 })
