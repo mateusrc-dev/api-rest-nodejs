@@ -1,6 +1,7 @@
-import { test, beforeAll, afterAll, describe, expect } from 'vitest'
+import { test, beforeAll, afterAll, describe, expect, beforeEach } from 'vitest'
 import { app } from '../app' // we let's have access the application without having to climb it
 import request from 'supertest'
+import { execSync } from 'node:child_process' // with 'execSync' we can do terminal commands in Node code
 
 describe('Transactions routes', () => {
   // name test category
@@ -12,6 +13,12 @@ describe('Transactions routes', () => {
   afterAll(async () => {
     // this function execute after all tests
     await app.close() // we let's await that this app stay close
+  })
+
+  beforeEach(() => {
+    // before each test we let's execute this code
+    execSync('npm run knex migrate:rollback --all') // for reset database of tests
+    execSync('npm run knex migrate:latest')
   })
 
   test('the user can create a new transaction', async () => {

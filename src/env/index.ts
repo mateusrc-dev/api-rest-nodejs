@@ -1,5 +1,12 @@
-import 'dotenv/config' // now this file will to read the file '.env' e will to put the information in 'process.env'
+import { config } from 'dotenv' // now this file will to read the file '.env' e will to put the information in 'process.env'
 import { z } from 'zod'
+
+if (process.env.NODE_ENV === 'test') {
+  // NODE_ENV is an environment variable that is automatically populated with 'test' when vitest is run
+  config({ path: '.env.test' }) // let's say which file will be read, now will to create a database for tests
+} else {
+  config() // he will to find environment variable in .env
+}
 
 const envSchema = z.object({
   // process.env is a object // process.env.DATABASE_URL
