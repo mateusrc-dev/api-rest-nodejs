@@ -55,4 +55,64 @@ describe('Transactions routes', () => {
       }),
     ]) // here will return the transaction created above - we can test if the data is how expect
   })
+
+  test('the user can catch specific transaction', async () => {
+    const createTransactionResponse = await request(app.server) // we let's access 'Node' server http that are inside in framework
+      .post('/transactions')
+      .send({
+        title: 'New transaction',
+        amount: 5000,
+        type: 'credit',
+      })
+    const cookies = createTransactionResponse.get('Set-Cookie') // cannot send this cookie to another test, each test is isolated from the other - a test not can dependence of other - for create a test we need consider that other tests not exist
+
+    const listTransactionsResponse = await request(app.server)
+      .get('/transactions')
+      .set('Cookie', cookies) // set is for send a information in headers of request (view more in documentation)
+      .expect(200) // 200 = success
+
+    const transactionId = listTransactionsResponse.body.transactions[0].id
+
+    const getTransactionResponse = await request(app.server)
+      .get(`/transactions/${transactionId}`)
+      .set('Cookie', cookies) // set is for send a information in headers of request (view more in documentation)
+      .expect(200) // 200 = success
+
+    expect(getTransactionResponse.body.transaction).toEqual(
+      expect.objectContaining({
+        // id: expect.any(String), // hope my id is any string
+        title: 'New transaction',
+        amount: 5000,
+      }),
+    ) // here will return the transaction created above - we can test if the data is how expect
+  })
+
+  test('the user can get the summary', async () => {
+    const createTransactionResponse = await request(app.server) // we let's access 'Node' server http that are inside in framework
+      .post('/transactions')
+      .send({
+        title: 'New transaction',
+        amount: 5000,
+        type: 'credit',
+      })
+    const cookies = createTransactionResponse.get('Set-Cookie') // cannot send this cookie to another test, each test is isolated from the other - a test not can dependence of other - for create a test we need consider that other tests not exist
+
+    await request(app.server) // we let's access 'Node' server http that are inside in framework
+      .post('/transactions')
+      .set('Cookie', cookies) // set is for send a information in headers of request (view more in documentation)
+      .send({
+        title: 'Debit Transaction',
+        amount: 2000,
+        type: 'debit',
+      })
+
+    const summaryResponse = await request(app.server)
+      .get('/transactions/summary')
+      .set('Cookie', cookies) // set is for send a information in headers of request (view more in documentation)
+      .expect(200) // 200 = success
+
+    expect(summaryResponse.body.summary).toEqual({
+      amount: 3000,
+    }) // here will return the transaction created above - we can test if the data is how expect
+  })
 })
