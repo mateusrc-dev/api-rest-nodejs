@@ -9,7 +9,7 @@ export const config: Knex.Config = {
       ? {
           filename: env.DATABASE_URL,
         }
-      : { database: env.DATABASE_URL },
+      : env.DATABASE_URL,
   useNullAsDefault: true, // all field of table will have a null value
   migrations: {
     extension: 'ts',
