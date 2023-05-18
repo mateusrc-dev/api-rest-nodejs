@@ -13,7 +13,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('production'), // development, test, production - common ambients
   DATABASE_CLIENT: z.enum(['sqlite', 'pg']), // our application accept postGreeSQL and sqlite
   DATABASE_URL: z.string(), // this value is mandatory because I didn't insert 'nullable'
-  PORT: z.coerce.number().default(10000), // 'coerce' is for transform any value in number
+  PORT: z.coerce.number().default(3333), // 'coerce' is for transform any value in number
 }) // we let's create a schema that is a data format
 
 const _env = envSchema.safeParse(process.env) // here will to build validation with our schema - if the data is not correct, an error will occur - we let's use safeParse for create our error
