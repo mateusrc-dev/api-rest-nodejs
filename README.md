@@ -1,25 +1,25 @@
-# Nessa aplicação (faz parte da trilha Nodejs do Ignite da Rocketseat) criamos um back-end em NodeJs de transações no qual o usuário pode criar transações e visualizar suas transações 🚀🚀
+# In this application (it is part of Rocketseat's Ignite Nodejs track) we created a transaction back-end in NodeJs in which the user can create transactions and view their transactions 🚀🚀
 
-### Abaixo é citado alguns requisitos funcionais e regras de negócio da aplicação:
+### Below are some functional requirements and business rules for the application:
 
-➡️ requisitos funcionais: 
-- usuário deve poder criar uma nova transação 
-- usuário deve poder obter um resumo da conta 
-- o usuário deve poder listar todas as transações que já ocorreram 
-- o usuário deve poder visualizar uma transação única
+➡️ functional requirements:
+- user must be able to create a new transaction
+- user must be able to get an account summary
+- the user must be able to list all transactions that have already occurred
+- user must be able to view a single transaction
 
-➡️ regras de negócio: 
-- a transação pode ser do tipo crédito que somará ao valor total , ou débito que subtrairá 
-- ao o usuário fazer requisições, deve ser possível identificarmos o usuário entre as requisições 
-- se o usuário tentar listar transações, usuário só pode visualizar transações que ele criou
+➡️ business rules:
+- the transaction can be of the credit type that will add to the total amount, or debit that will subtract
+- when the user makes requests, it must be possible to identify the user among the requests
+- if user tries to list transactions, user can only view transactions he created
 
-### Algumas libs usadas na aplicação:
+### Some libs used in the application:
 
-- sqlite3 ->  banco de dados relacional → fácil de migrar para outro banco caso necessário
-- fastify/cookie -> vamos usar cookie para identificar o usuário que está criando uma transaction
-- dotenv -> vamos usar o dotenv para ler o arquivo .env dentro do NodeJs
-- fastify -> semelhante ao express → traz parte tradicional usada na construção de uma API (lidar com rotas, parâmetros, cabeçalhos, respostas em JSON, entende requisições em JSON) 
-- knex -> um query buiders no qual não precisamos focar muito em aprender sql e podemos focar na linguagem aplicada -> é um construtor de querys, facilita escrita das querys com código JS
-- zod -> para fazer a validação de dados como por exemplo as variáveis de ambiente da aplicação, dados enviados como parâmetros em rotas
+- sqlite3 -> relational database → easy to migrate to another database if necessary
+- fastify/cookie -> we will use cookie to identify the user who is creating a transaction
+- dotenv -> let's use dotenv to read the .env file inside NodeJs
+- fastify -> similar to express → brings traditional part used in building an API (dealing with routes, parameters, headers, responses in JSON, understands requests in JSON)
+- knex -> a query builder in which we don't need to focus too much on learning SQL and we can focus on the applied language -> it is a query builder, making it easier to write queries with JS code
+- zod -> to validate data such as application environment variables, data sent as parameters in routes
 
-### Caso desejar testar a aplicação na sua máquina baixar o repositório e rodar o comando 'npm run dev' no terminal do repositório, você pode usar o insomnia para testar as rotas da aplicação 🚀
+### If you want to test the application on your machine, download the repository and run the 'npm run dev' command in the repository terminal, you can use insomnia to test the application routes 🚀
